@@ -5,6 +5,16 @@ from django.db import models
 User = get_user_model()
 
 
+class Users(models.Model):
+    username = models.CharField(max_lenght=150)
+    email = models.EmailField(max_lenght=254)
+    first_name = models.CharField(max_lenght=150)
+    last_name = models.CharField(max_lenght=150)
+    bio = models.CharField()
+    roles = ['user', 'moderator', 'admin']
+    role = models.CharField(choices=roles, default='user',)
+
+
 class Review(models.Model):
     text = models.CharField(max_length=200)
     author = models.ForeignKey(
