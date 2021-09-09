@@ -16,19 +16,18 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    title = models.CharField(max_length=200)
+    genre = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    
 
     class Meta:
         ordering = ['-title']
 
     def __str__(self):
-        return self.title
+        return self.genre
 
 
 class Title(models.Model):
-    title = models.CharField(max_length=200)
+    text = models.CharField(max_length=200)
     pub_date = models.DateTimeField(
         'Дата публикации',
         auto_now_add=True
