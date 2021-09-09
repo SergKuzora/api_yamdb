@@ -1,16 +1,17 @@
 from django.shortcuts import get_object_or_404
-from reviews.models import Review
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from reviews.models import Review
 
-from .permissions import IsAuthorOrReadOnlyPermission
-
+from .permissions import (IsAdminOrReadOnlyPermission,
+                          IsAuthorOrReadOnlyPermission)
 from .serializers import CommentsSerializer, ReviewSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthorOrReadOnlyPermission,
+                          IsAdminOrReadOnlyPermission,
                           IsAuthenticatedOrReadOnly)
 
     def get_queryset(self):
@@ -23,6 +24,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
     permission_classes = (IsAuthorOrReadOnlyPermission,
+                          IsAdminOrReadOnlyPermission,
                           IsAuthenticatedOrReadOnly)
 
     def perform_create(self, serializer):
