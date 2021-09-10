@@ -10,12 +10,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminUserOrReadOnly,)
+    lookup_field = 'slug'
+
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminUserOrReadOnly,)
+    lookup_field = 'slug'
 
 
 class TitleViewSet(viewsets.ModelViewSet):

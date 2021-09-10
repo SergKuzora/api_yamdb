@@ -3,7 +3,7 @@ from django.urls import include, path
 from rest_framework.authtoken import views
 from rest_framework.routers import SimpleRouter
 
-from .views import CategoryViewSet
+from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 
 router_v1 = SimpleRouter()
 
@@ -14,12 +14,12 @@ router_v1.register(
 )
 router_v1.register(
     'Titles',
-    CategoryViewSet,
+    TitleViewSet,
     basename='titles'
 )
 router_v1.register(
     'Genres',
-    CategoryViewSet,
+    GenreViewSet,
     basename='genres'
 )
 

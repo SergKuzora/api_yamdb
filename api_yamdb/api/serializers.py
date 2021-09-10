@@ -12,6 +12,10 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Category
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -26,3 +30,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Genre
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }

@@ -16,35 +16,30 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    genre = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
 
     class Meta:
-        ordering = ['-title']
+        ordering = ['-name']
 
     def __str__(self):
-        return self.genre
+        return self.name
 
 
 class Title(models.Model):
     text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='posts'
-    )
     Category = models.ForeignKey(
         Category,
-        on_delete=models.CASCADE,
-        related_name='titles',
-        blank=True,
-        null=True
+        on_delete=models.DO_NOTHING,
+        related_name='category'
     )
-    genre = models.ManyToManyField(Genre)
+    genre = models.ManyToManyField(
+        Genre,
+        related_name='genre'
+    )
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ['-text']
+    
+    def __str__(self):
+        return self.text
