@@ -1,19 +1,11 @@
-import json
-from random import choice
-
 from rest_framework.views import APIView
-from rest_framework import generics, serializers, status, viewsets
-from rest_framework import response
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
-from rest_framework.renderers import JSONRenderer
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import filters, mixins, permissions, viewsets
+from rest_framework import mixins, viewsets
 
-from .models import User
+from reviews.models import User
 from .serializers import GetTokenSerializer, SignupSerializer
-from .utils import Util
 
 class CreateModelViewSet(mixins.CreateModelMixin,
                     viewsets.GenericViewSet):
