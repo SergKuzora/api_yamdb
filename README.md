@@ -1,15 +1,43 @@
+### Как запустить проект:
 
-## API for 'Yamdb'
+Клонировать репозиторий и перейти в него в командной строке:
 
+```
+git clone https://github.com/oleg-rubtsov/api_final_yatube.git
+```
 
-## Installing
+```
+cd kittygram2
+```
 
-    git clone 
+Cоздать и активировать виртуальное окружение:
 
+```
+python3 -m venv env
+```
 
-## Install reuqirements.txt
+```
+source env/bin/activate
+```
 
-    pip3 install -r requirements.txt
+```
+python3 -m pip install --upgrade pip
+```
 
-## And Run
-    python manage.py runserver
+Установить зависимости из файла requirements.txt:
+
+```
+pip install -r requirements.txt
+```
+
+Выполнить миграции:
+
+```
+python3 manage.py migrate
+```
+
+Запустить проект:
+
+```
+python3 manage.py runserver
+```
