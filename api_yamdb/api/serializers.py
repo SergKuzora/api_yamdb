@@ -10,6 +10,7 @@ class SignupSerializer(serializers.ModelSerializer):
 
 class GetTokenSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
+    confirmation_code = serializers.IntegerField()
 
     class Meta:
         model = User

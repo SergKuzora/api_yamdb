@@ -19,7 +19,7 @@ class User(AbstractUser):
         blank=True,
     ) 
     role = models.CharField(max_length=16, choices=CHOICES, default='user', blank=True)
-    confirmation_code = models.CharField(max_length=4, blank=True)
+    confirmation_code = models.IntegerField(default=0)
 
 @receiver(post_save, sender=User)
 def post_save(sender, instance, created, **kwargs):
