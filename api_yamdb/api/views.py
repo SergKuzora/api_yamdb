@@ -6,10 +6,29 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import User
+from .permissions import IsAdminUserOrReadOnly, AdminOnly
+from reviews.models import User, Category, Genre, Title
+from .serializers import GetTokenSerializer, SignupSerializer, CategorySerializer, GenreSerializer, TitleSerializer, UsersSerializer
 
-from .permissions import AdminOnly
-from .serializers import GetTokenSerializer, SignupSerializer, UsersSerializer
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
+    lookup_field = 'slug'
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
+    lookup_field = 'slug'
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
 
 
 class CreateViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

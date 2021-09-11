@@ -1,12 +1,12 @@
-from random import choice
-
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from random import choice
 from .utils import Util
+
 
 CHOICES = (
     ('user', 'user'),
@@ -51,3 +51,48 @@ def post_save(sender, instance, created, **kwargs):
                 'email_subject': 'That`s your code!'}
 
         Util.send_email(data)
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ['-name']
+
+    def __str__(self):
+        return self.name
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ['-name']
+
+    def __str__(self):
+        return self.name
+
+
+class Title(models.Model):
+    name = models.CharField(max_length=200)
+    year = models.IntegerField()
+    description = models.TextField(blank=True)
+    category = models.ForeignKey(
+        Category,
+        related_name='titles',
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    genre = models.ManyToManyField(
+        Genre,
+        related_name='titles',
+        blank=True
+    )
+
+    class Meta:
+        ordering = ['-name']
+    
+    def __str__(self):
+        return self.text
