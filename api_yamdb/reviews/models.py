@@ -7,16 +7,7 @@ User = get_user_model()
 
 
 class Title(models.Model):
-    title = models.CharField(max_length=200)
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='titles'
-    )
+    pass
 
 
 class Review(models.Model):
