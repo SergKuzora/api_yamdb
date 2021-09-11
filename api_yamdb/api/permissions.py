@@ -10,12 +10,6 @@ class IsAuthorOrReadOnlyPermission(permissions.BasePermission):
         return obj.author == request.user
 
 
-class IsAdminOrReadOnlyPermission(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.is_staff)
-
-
 class AdminOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (request.user.role == 'admin'
@@ -31,4 +25,3 @@ class IsAdminUserOrReadOnly(IsAdminUser):
     def has_permission(self, request, view):
         is_admin = super().has_permission(request, view)
         return request.method in SAFE_METHODS or is_admin
-
