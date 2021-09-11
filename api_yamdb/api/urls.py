@@ -8,17 +8,17 @@ from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 router_v1 = SimpleRouter()
 
 router_v1.register(
-    'Categories',
+    'categories',
     CategoryViewSet,
     basename='сategories'
 )
 router_v1.register(
-    'Titles',
+    'titles',
     TitleViewSet,
     basename='titles'
 )
 router_v1.register(
-    'Genres',
+    'genres',
     GenreViewSet,
     basename='genres'
 )

@@ -13,7 +13,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
