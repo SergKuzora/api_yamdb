@@ -6,10 +6,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('reviews', '0001_initial'),
-    ]
-
+   
     operations = [
         migrations.AlterModelOptions(
             name='genre',

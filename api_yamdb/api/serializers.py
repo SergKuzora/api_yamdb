@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
-from reviews.models import Category, Title, Genre
+from reviews.models import Category, Title, Genre, User
 from rest_framework import serializers
-# from rest_framework.relations import SlugRelatedField
-# from rest_framework.validators import UniqueTogetherValidator
+
 
 User = get_user_model()
 
@@ -36,3 +35,18 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
+
+
+class SignupSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = User
+        fields = ('email', 'username')
+
+
+class GetTokenSerializer(serializers.ModelSerializer):
+    username = serializers.CharField()
+    confirmation_code = serializers.IntegerField()
+
+    class Meta:
+        model = User
+        fields = ('username', 'confirmation_code')
