@@ -1,20 +1,22 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
-from .permissions import (IsAdminOrReadOnlyPermission,
-                          IsAuthorOrReadOnlyPermission)
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (IsAuthenticated,)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .permissions import IsAdminUserOrReadOnly, AdminOnly
-from reviews.models import User, Category, Genre, Title, Review
-from .serializers import GetTokenSerializer, SignupSerializer, CategorySerializer, GenreSerializer, TitleSerializer, UsersSerializer,CommentsSerializer, ReviewSerializer
+
+from reviews.models import Category, Genre, Review, Title, User
+
+from .permissions import (AdminOnly,
+                          IsAdminUserOrReadOnly,)
+from .serializers import (
+    CategorySerializer, CommentsSerializer,
+    GenreSerializer, GetTokenSerializer,
+    ReviewSerializer, SignupSerializer, TitleSerializer,
+    UsersSerializer)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -87,12 +89,10 @@ def current_user(request):
     serializer = UsersSerializer(request.user)
     return Response(serializer.data)
 
-  
- class ReviewViewSet(viewsets.ModelViewSet):
+
+class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthorOrReadOnlyPermission,
-                          IsAdminOrReadOnlyPermission,
-                          IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAdminUserOrReadOnly,)
 
     def get_queryset(self):
         return Review.objects.filter(pk=self.kwargs.get('title_id'))
@@ -103,9 +103,7 @@ def current_user(request):
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
-    permission_classes = (IsAuthorOrReadOnlyPermission,
-                          IsAdminOrReadOnlyPermission,
-                          IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAdminUserOrReadOnly,)
 
     def perform_create(self, serializer):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))

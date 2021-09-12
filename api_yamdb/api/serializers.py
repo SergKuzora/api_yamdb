@@ -1,20 +1,17 @@
-from django.contrib.auth import get_user_model
-from reviews.models import Category, Title, Genre, User, Comments, Review
 from rest_framework import serializers
 
-
-User = get_user_model()
+from reviews.models import Category, Comments, Genre, Review, Title, User
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ('text', 'author', 'score', 'pub_date')
         model = Review
 
 
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ('text', 'author', 'pub_date')
         model = Comments
 
 

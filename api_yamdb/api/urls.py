@@ -1,18 +1,18 @@
 from django.urls import include, path
 from rest_framework.authtoken import views
 from rest_framework.routers import SimpleRouter
-    
-from .views import CategoryViewSet, GenreViewSet, TitleViewSet, CommentsViewSet, ReviewViewSet
 
-from .views import SignupViewSet, APIGetToken, UsersViewSet, current_user
+from .views import (APIGetToken, CategoryViewSet, CommentsViewSet,
+                    GenreViewSet, ReviewViewSet, SignupViewSet, TitleViewSet,
+                    UsersViewSet, current_user)
 
 router_v1 = SimpleRouter()
 
 app_name = 'api'
 
-router.register(r'titles/(?P<title_id>\d+)/reviews',
-                ReviewViewSet, basename='review')
-router.register(
+router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
+                   ReviewViewSet, basename='reviews')
+router_v1.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentsViewSet, basename='comments')
 router_v1.register(r'auth/signup',

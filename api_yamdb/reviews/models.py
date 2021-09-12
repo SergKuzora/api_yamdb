@@ -1,13 +1,13 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from random import choice
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from random import choice
-from .utils import Util
 
+from .utils import Util
 
 CHOICES = (
     ('user', 'user'),
@@ -94,11 +94,11 @@ class Title(models.Model):
 
     class Meta:
         ordering = ['-name']
-    
+
     def __str__(self):
         return self.text
 
-      
+
 class Review(models.Model):
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews')
