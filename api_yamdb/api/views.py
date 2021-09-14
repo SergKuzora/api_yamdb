@@ -7,10 +7,11 @@ from rest_framework.permissions import (IsAuthenticated,)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Avg
 
 from reviews.models import Category, Genre, Review, Title, User
 
-from .permissions import (AdminOnly,
+from .permissions import (AdminOnly, AdminModeratorAuthorPermission,
                           IsAdminUserOrReadOnly,)
 from .serializers import (
     CategorySerializer, CommentsSerializer,
@@ -34,7 +35,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
     serializer_class = TitleSerializer
     permission_classes = (IsAdminUserOrReadOnly,)
 
@@ -92,7 +93,7 @@ def current_user(request):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
+    permission_classes = (AdminModeratorAuthorPermission,)
 
     def get_queryset(self):
         return Review.objects.filter(pk=self.kwargs.get('title_id'))
@@ -103,7 +104,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
+    permission_classes = (AdminModeratorAuthorPermission,)
 
     def perform_create(self, serializer):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))

@@ -36,6 +36,18 @@ class User(AbstractUser):
                             default='user', blank=True)
     confirmation_code = models.IntegerField(default=0)
 
+    @property
+    def is_user(self):
+        return self.role == 'user'
+    
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+
+    @property
+    def is_moderator(self):
+        return self.role == 'moderator'
+
 
 @receiver(post_save, sender=User)
 def post_save(sender, instance, created, **kwargs):
@@ -111,7 +123,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        ordering = ['score']
+        ordering = ['-score']
 
     def __str__(self):
         return self.text
