@@ -37,7 +37,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
     serializer_class = TitleSerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
+    permission_classes = (AdminModeratorAuthorPermission,)
 
 
 class CreateViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -96,7 +96,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminModeratorAuthorPermission,)
 
     def get_queryset(self):
-        return Review.objects.filter(pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        return title.reviews.all()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

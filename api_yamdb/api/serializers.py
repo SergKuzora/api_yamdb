@@ -5,7 +5,7 @@ from reviews.models import Category, Comments, Genre, Review, Title, User
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('text', 'author', 'score', 'pub_date')
+        fields = '__all__'
         model = Review
 
 
