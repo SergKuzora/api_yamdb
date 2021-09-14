@@ -9,33 +9,58 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title, User
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import (AdminModeratorAuthorPermission, AdminOnly,
                           IsAdminUserOrReadOnly)
 from .serializers import (CategorySerializer, CommentsSerializer,
                           GenreSerializer, GetTokenSerializer,
-                          ReviewSerializer, SignupSerializer, TitleSerializer,
-                          UsersSerializer)
+                          ReviewSerializer, SignupSerializer,
+                          UsersSerializer, TitleReadSerializer, 
+                          TitleWriteSerializer)
+from rest_framework.filters import SearchFilter
+from rest_framework.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin
+)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class ModelMixinSet(CreateModelMixin, ListModelMixin, DestroyModelMixin,
+                    GenericViewSet):
+    pass
+
+
+class CategoryViewSet(ModelMixinSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminUserOrReadOnly,)
     lookup_field = 'slug'
+    filter_backends = [SearchFilter]
+    search_fields = ['=name', ]
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(ModelMixinSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminUserOrReadOnly,)
     lookup_field = 'slug'
+    filter_backends = [SearchFilter]
+    search_fields = ['=name']
 
 
-class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
-    serializer_class = TitleSerializer
-    permission_classes = (AdminModeratorAuthorPermission,)
+class TitleViewSet(ModelViewSet):
+    queryset = Title.objects.all()
+    permission_classes = (IsAdminUserOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleWriteSerializer
+
+    def get_queryset(self):
+        return Title.objects.annotate(
+            rating=Avg('reviews__score')).all()
 
 
 class CreateViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
