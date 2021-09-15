@@ -7,6 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from api.filters import TitleFilter
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title, User
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
@@ -37,7 +38,7 @@ class CategoryViewSet(ModelMixinSet):
     permission_classes = (IsAdminUserOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = [SearchFilter]
-    search_fields = ['=name', ]
+    search_fields = ['name', ]
 
 
 class GenreViewSet(ModelMixinSet):
@@ -46,12 +47,14 @@ class GenreViewSet(ModelMixinSet):
     permission_classes = (IsAdminUserOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = [SearchFilter]
-    search_fields = ['=name']
+    search_fields = ['name']
 
 
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     permission_classes = (IsAdminUserOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
