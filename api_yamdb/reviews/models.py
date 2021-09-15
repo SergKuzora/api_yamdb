@@ -108,7 +108,7 @@ class Title(models.Model):
         ordering = ['-name']
 
     def __str__(self):
-        return self.text
+        return self.name
 
 
 class Review(models.Model):
@@ -123,7 +123,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        unique_together = ['title', 'author']
+        unique_together = ('title', 'author')
         ordering = ['-score']
 
     def __str__(self):
