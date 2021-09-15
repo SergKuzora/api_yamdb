@@ -123,6 +123,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
+        unique_together = ['title', 'author']
         ordering = ['-score']
 
     def __str__(self):
