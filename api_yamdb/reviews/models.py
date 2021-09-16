@@ -49,6 +49,9 @@ class User(AbstractUser):
         return self.role == 'moderator'
 
 
+    class Meta:
+        ordering = ['-username', ]
+
 @receiver(post_save, sender=User)
 def post_save(sender, instance, created, **kwargs):
     if created:
@@ -137,3 +140,6 @@ class Comments(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments')
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ['-pub_date', ]
