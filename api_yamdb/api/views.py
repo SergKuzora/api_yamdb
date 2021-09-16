@@ -1,7 +1,7 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -18,7 +18,7 @@ from .serializers import (CategorySerializer, CommentsSerializer,
                           GenreSerializer, GetTokenSerializer,
                           ReviewSerializer, SignupSerializer,
                           UsersSerializer, TitleReadSerializer,
-                          TitleWriteSerializer)
+                          TitleWriteSerializer, NotAdminSerializer)
 from rest_framework.filters import SearchFilter
 from rest_framework.mixins import (
     CreateModelMixin,
@@ -37,7 +37,7 @@ class CategoryViewSet(ModelMixinSet):
     serializer_class = CategorySerializer
     permission_classes = (IsAdminUserOrReadOnly,)
     lookup_field = 'slug'
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, ]
     search_fields = ['name', ]
 
 
@@ -46,8 +46,8 @@ class GenreViewSet(ModelMixinSet):
     serializer_class = GenreSerializer
     permission_classes = (IsAdminUserOrReadOnly,)
     lookup_field = 'slug'
-    filter_backends = [SearchFilter]
-    search_fields = ['name']
+    filter_backends = [SearchFilter, ]
+    search_fields = ['name', ]
 
 
 class TitleViewSet(ModelViewSet):
@@ -70,9 +70,15 @@ class CreateViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     pass
 
 
-class SignupViewSet(CreateViewSet):
-    queryset = User.objects.all()
-    serializer_class = SignupSerializer
+class APISignup(APIView):
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,
+                            status=status.HTTP_200_OK)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class APIGetToken(APIView):
@@ -98,8 +104,8 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UsersSerializer
     permission_classes = (IsAuthenticated, AdminOnly,)
     lookup_field = 'username'
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    search_fields = ('username',)
+    filter_backends = [SearchFilter, ]
+    search_fields = ('username', )
     pagination_class = PageNumberPagination
 
 
@@ -107,8 +113,12 @@ class UsersViewSet(viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated])
 def current_user(request):
     if request.method == 'PATCH':
-        serializer = UsersSerializer(request.user, data=request.data,
-                                     partial=True)
+        if request.user.role == 'admin':
+            serializer = UsersSerializer(request.user, data=request.data,
+                                         partial=True)
+        else:
+            serializer = NotAdminSerializer(request.user, data=request.data,
+                                            partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
