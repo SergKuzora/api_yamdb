@@ -48,9 +48,9 @@ class User(AbstractUser):
     def is_moderator(self):
         return self.role == 'moderator'
 
-
     class Meta:
         ordering = ['-username', ]
+
 
 @receiver(post_save, sender=User)
 def post_save(sender, instance, created, **kwargs):
