@@ -3,8 +3,8 @@ from rest_framework.authtoken import views
 from rest_framework.routers import SimpleRouter
 
 from .views import (APIGetToken, APISignup, CategoryViewSet, CommentsViewSet,
-                    GenreViewSet, ReviewViewSet, TitleViewSet,
-                    UsersViewSet, current_user)
+                    GenreViewSet, ReviewViewSet, TitleViewSet, UsersViewSet,
+                    current_user)
 
 router_v1 = SimpleRouter()
 

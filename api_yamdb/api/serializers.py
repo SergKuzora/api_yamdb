@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+
 from reviews.models import Category, Comments, Genre, Review, Title, User
 
 
@@ -97,7 +98,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate_score(self, value):
         if value not in range(1, 11):
-            raise serializers.ValidationError('Error')
+            raise serializers.ValidationError('Оценка по 10-бальной шкале!')
         return value
 
     def validate(self, data):
@@ -107,7 +108,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         title = get_object_or_404(Title, pk=title_id)
         if request.method == 'POST':
             if Review.objects.filter(title=title, author=author).exists():
-                raise ValidationError('Error')
+                raise ValidationError('Только один отзывы оставить!')
         return data
 
     class Meta:

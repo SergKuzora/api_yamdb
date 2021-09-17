@@ -1,30 +1,27 @@
+from api.filters import TitleFilter
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.filters import SearchFilter
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   ListModelMixin)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from api.filters import TitleFilter
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title, User
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .permissions import (AdminModeratorAuthorPermission, AdminOnly,
                           IsAdminUserOrReadOnly)
 from .serializers import (CategorySerializer, CommentsSerializer,
                           GenreSerializer, GetTokenSerializer,
-                          ReviewSerializer, SignupSerializer,
-                          UsersSerializer, TitleReadSerializer,
-                          TitleWriteSerializer, NotAdminSerializer)
-from rest_framework.filters import SearchFilter
-from rest_framework.mixins import (
-    CreateModelMixin,
-    DestroyModelMixin,
-    ListModelMixin
-)
+                          NotAdminSerializer, ReviewSerializer,
+                          SignupSerializer, TitleReadSerializer,
+                          TitleWriteSerializer, UsersSerializer)
 
 
 class ModelMixinSet(CreateModelMixin, ListModelMixin, DestroyModelMixin,
