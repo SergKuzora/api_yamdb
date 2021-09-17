@@ -8,7 +8,7 @@ from reviews.models import Category, Comments, Genre, Review, Title, User
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('name', 'slug')
+        exclude = ['id']
         model = Category
         lookup_field = 'slug'
         extra_kwargs = {
@@ -19,7 +19,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('name', 'slug')
+        exclude = ['id']
         model = Genre
         lookup_field = 'slug'
         extra_kwargs = {

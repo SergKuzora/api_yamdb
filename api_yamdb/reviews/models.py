@@ -1,5 +1,5 @@
 from random import choice
-
+from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -23,6 +23,11 @@ def validate_username_me(value):
             params={'value': value},
         )
 
+def validate_year(value):
+    now = datetime.now().year
+    if value > now:
+        raise ValidationError(
+            'Год не может больше текущего')
 
 class User(AbstractUser):
     username = models.CharField(validators=(validate_username_me,),
@@ -70,45 +75,62 @@ def post_save(sender, instance, created, **kwargs):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=200, verbose_name='category name')
+    slug = models.SlugField(unique=True, verbose_name='category slug')
 
     class Meta:
         ordering = ['-name']
+        verbose_name = 'category'
+        verbose_name_plural = 'categories'
 
     def __str__(self):
         return self.name
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=200, verbose_name='genre name')
+    slug = models.SlugField(unique=True, verbose_name='genre slug')
 
     class Meta:
         ordering = ['-name']
+        verbose_name = 'genre'
+        verbose_name_plural = 'genres'
 
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=200)
-    year = models.IntegerField()
+    name = models.CharField(
+        max_length=200,
+        verbose_name='title name',
+        db_index=True
+    )
+    year = models.IntegerField(
+        validators=[validate_year],
+        default=0,
+        verbose_name='year of creation',
+        db_index=True
+    )
     description = models.TextField(blank=True)
     category = models.ForeignKey(
         Category,
         related_name='titles',
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        verbose_name='category'
     )
     genre = models.ManyToManyField(
         Genre,
         related_name='titles',
-        blank=True
+        blank=True,
+        verbose_name='genre'
     )
 
     class Meta:
         ordering = ['-name']
+        verbose_name = 'title'
+        verbose_name_plural = 'titles'
 
     def __str__(self):
         return self.name
