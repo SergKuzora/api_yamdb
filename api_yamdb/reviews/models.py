@@ -1,33 +1,25 @@
 from random import choice
-from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from api_yamdb.settings import ROLES
+from .validators import (validate_username_me,
+                         validate_year)
 from .utils import Util
 
+USER = 'user'
+ADMIN = 'admin'
+MODERATOR = 'moderator'
 CHOICES = (
-    ('user', 'user'),
-    ('admin', 'admin'),
-    ('moderator', 'moderator')
+    (USER, 'user'),
+    (ADMIN, 'admin'),
+    (MODERATOR, 'moderator')
 )
 
-
-def validate_username_me(value):
-    if value == 'me':
-        raise ValidationError(
-            ('Username can`t be "me"'),
-            params={'value': value},
-        )
-
-def validate_year(value):
-    now = datetime.now().year
-    if value > now:
-        raise ValidationError(
-            'Год не может больше текущего')
 
 class User(AbstractUser):
     username = models.CharField(validators=(validate_username_me,),
@@ -43,15 +35,15 @@ class User(AbstractUser):
 
     @property
     def is_user(self):
-        return self.role == 'user'
+        return self.role == ROLES['USER_ROLE']
 
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role == ROLES['ADMIN_ROLE']
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == ROLES['MODERATOR_ROLE']
 
     class Meta:
         ordering = ['-username', ]

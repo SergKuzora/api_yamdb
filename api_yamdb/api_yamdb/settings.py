@@ -127,3 +127,9 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 
 EMAIL_USE_TLS = True
+
+ROLES = {
+    'ADMIN_ROLE': 'admin',
+    'USER_ROLE': 'user',
+    'MODERATOR_ROLE': 'moderator',
+}

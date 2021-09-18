@@ -1,9 +1,9 @@
-from api.filters import TitleFilter
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -11,16 +11,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import Category, Genre, Review, Title, User
 
+from api.filters import TitleFilter
+from .mixins import ModelMixinSet
 from .permissions import (AdminModeratorAuthorPermission, AdminOnly,
                           IsAdminUserOrReadOnly)
+from reviews.models import Category, Genre, Review, Title, User
 from .serializers import (CategorySerializer, CommentsSerializer,
                           GenreSerializer, GetTokenSerializer,
                           NotAdminSerializer, ReviewSerializer,
                           SignupSerializer, TitleReadSerializer,
                           TitleWriteSerializer, UsersSerializer)
-from .mixins import ModelMixinSet
 
 
 class CategoryViewSet(ModelMixinSet):
@@ -58,22 +59,20 @@ class TitleViewSet(ModelViewSet):
 class APISignup(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,
-                            status=status.HTTP_200_OK)
-        return Response(serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.validated_data
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class APIGetToken(APIView):
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.data
+        data = serializer.validated_data
         try:
             user = User.objects.get(username=data['username'])
-        except Exception:
+        except ObjectDoesNotExist:
             return Response({'username': 'User not found'},
                             status=status.HTTP_404_NOT_FOUND)
         if data.get('confirmation_code') == user.confirmation_code:
@@ -93,23 +92,23 @@ class UsersViewSet(viewsets.ModelViewSet):
     search_fields = ('username', )
     pagination_class = PageNumberPagination
 
-
-@api_view(['GET', 'PATCH'])
-@permission_classes([IsAuthenticated])
-def current_user(request):
-    if request.method == 'PATCH':
-        if request.user.role == 'admin':
-            serializer = UsersSerializer(request.user, data=request.data,
-                                         partial=True)
-        else:
-            serializer = NotAdminSerializer(request.user, data=request.data,
-                                            partial=True)
-        if serializer.is_valid():
+    @action(methods=['GET', 'PATCH'], detail=False,
+            permission_classes=[IsAuthenticated, ],
+            url_path='me')
+    def current_user(self, request):
+        if request.method == 'PATCH':
+            if request.user.is_admin:
+                serializer = UsersSerializer(request.user, data=request.data,
+                                             partial=True)
+            else:
+                serializer = NotAdminSerializer(request.user,
+                                                data=request.data,
+                                                partial=True)
+            serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    serializer = UsersSerializer(request.user)
-    return Response(serializer.data)
+        serializer = UsersSerializer(request.user)
+        return Response(serializer.data)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
