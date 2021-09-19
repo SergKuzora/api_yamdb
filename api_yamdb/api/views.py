@@ -46,7 +46,7 @@ class TitleViewSet(ModelViewSet):
         rating=Avg('reviews__score')
     ).all()
     permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
