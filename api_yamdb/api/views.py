@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -72,7 +71,7 @@ class APIGetToken(APIView):
         data = serializer.validated_data
         try:
             user = User.objects.get(username=data['username'])
-        except ObjectDoesNotExist:
+        except User.DoesNotExist:
             return Response({'username': 'User not found'},
                             status=status.HTTP_404_NOT_FOUND)
         if data.get('confirmation_code') == user.confirmation_code:

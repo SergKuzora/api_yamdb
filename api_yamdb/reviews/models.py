@@ -30,7 +30,7 @@ class User(AbstractUser):
         blank=True,
     )
     role = models.CharField(max_length=16, choices=CHOICES,
-                            default='user', blank=True)
+                            default=USER, blank=True)
     confirmation_code = models.IntegerField(default=0)
 
     @property
