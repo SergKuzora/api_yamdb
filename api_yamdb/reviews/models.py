@@ -135,13 +135,16 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
     score = models.IntegerField(
-        validators=[MinValueValidator(1),
-                    MaxValueValidator(10)])
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        error_messages={'validators': 'Оценка по 10-бальной шкале!'})
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        unique_together = ('title', 'author')
-        ordering = ['-score']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='author title')]
+        ordering = ['-score', 'pub_date']
 
     def __str__(self):
         return self.text
